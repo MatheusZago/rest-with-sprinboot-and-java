@@ -1,5 +1,7 @@
 package br.com.matheus;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,11 @@ public class PersonController {
 	public Person findById(@PathVariable String id) throws Exception {
 
 		return service.findById(id);
+	}
+
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Person> findByAll() throws Exception {
+		return service.findAll();
 	}
 
 }
