@@ -1,37 +1,22 @@
-package br.com.matheus.model;
+package br.com.matheus.data.vo.v1;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity // Para dizer que é uma entidade de banco de dados
-@Table(name = "person") // Para dizer qual tabela ele se refere
-public class Person implements Serializable {
+public class PersonVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id // Para falar q é a primary Key
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // Fazendo o auto increment
 	private Long id;
-	@Column(name = "first_name", nullable = false, length = 80)
 	private String firstName;
-	@Column(name = "last_name", nullable = false, length = 80)
 	private String lastName;
-	@Column(name = "address", nullable = false, length = 100)
 	private String address;
-	@Column(name = "gender", nullable = false, length = 6)
 	private String gender;
 
-	public Person() {
+	public PersonVO() {
 
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -84,7 +69,7 @@ public class Person implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Person other = (Person) obj;
+		PersonVO other = (PersonVO) obj;
 		return id == other.id;
 	}
 
