@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.matheus.model.Person;
 
-@Repository
+@Repository // Repository não é mais necessário, mas nn faz mal
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
 }
