@@ -1,77 +1,70 @@
 package br.com.matheus.services;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import br.com.matheus.exceptions.ResourceNotFoundException;
 import br.com.matheus.model.Person;
+import br.com.matheus.repositories.PersonRepository;
 
 @Service // Para que o Springboot encare esse objeto como um que vai ser injetado em
 			// runtime na app
 //Ou seja, ele não precisa fazer o Person Service = new Service(), isso já faz ele ficar instanciado em todos os lugares que precisam dele
 public class PersonServices {
 
-	private final AtomicLong counter = new AtomicLong();
 	private Logger logger = Logger.getLogger(PersonServices.class.getName());
 
-	public Person findById(String id) {
-
-		logger.info("Finding one person!");
-		Person person = new Person();
-		person.setId(counter.incrementAndGet());
-		person.setFirstName("Leandro");
-		person.setLastName("Costa");
-		person.setAddress("Uberlandia - Minas Gerais - Brasil");
-		person.setGender("Male");
-		return person;
-	}
+	@Autowired // Tbm serve pra injetar p cpntroller
+	private PersonRepository personRepository;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Person> findAll() throws Exception {
-		List<Person> persons = new ArrayList<>();
+		logger.info("Finding all people");
+		return personRepository.findAll();
+	}
 
-		for (int i = 0; i < 8; i++) {
-			Person person = mockPerson(i);
-			persons.add(person);
-		}
-		return persons;
+	public Person findById(Long id) {
+		logger.info("Finding one person!");
+
+		return personRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
 	}
 
 //	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public Person create(Person person) throws Exception {
 
 		logger.info("Creating one person");
-		return person;
+		return personRepository.save(person);
 	}
 
 //	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public Person update(Person person) throws Exception {
-
 		logger.info("Updating one person");
-		return person;
+
+		Person entity = personRepository.findById(person.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
+
+		entity.setFirstName(person.getFirstName());
+		entity.setLastName(person.getLastName());
+		entity.setAddress(person.getAddress());
+		entity.setGender(person.getGender());
+
+		return personRepository.save(entity);
 	}
 
 //	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public void delete(String id) throws Exception {
-
+	public void delete(Long id) throws Exception {
 		logger.info("Deleting one person");
-	}
 
-	private Person mockPerson(int i) {
+		Person entity = personRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
 
-		logger.info("Findind all people");
-		Person person = new Person();
-		person.setId(counter.incrementAndGet());
-		person.setFirstName("Person name " + i);
-		person.setLastName("Last name " + i);
-		person.setAddress("Some address in Brazil " + i);
-		person.setGender("Male");
-		return person;
+		personRepository.delete(entity);
 	}
 
 }

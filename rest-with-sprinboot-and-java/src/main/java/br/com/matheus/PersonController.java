@@ -26,7 +26,7 @@ public class PersonController {
 	// pelo autowired e pelo service.
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Person findById(@PathVariable String id) throws Exception {
+	public Person findById(@PathVariable Long id) throws Exception {
 
 		return service.findById(id);
 	}
@@ -47,7 +47,7 @@ public class PersonController {
 	}
 
 	@DeleteMapping(value = "/{id}")
-	public void delete(@PathVariable String id) throws Exception {
+	public void delete(@PathVariable Long id) throws Exception {
 
 		service.delete(id);
 	}
