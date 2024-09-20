@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import br.com.matheus.data.vo.v1.PersonVO;
+import br.com.matheus.data.vo.v2.PersonVOV2;
 import br.com.matheus.exceptions.ResourceNotFoundException;
 import br.com.matheus.mapper.DozerMapper;
 import br.com.matheus.model.Person;
@@ -44,14 +45,26 @@ public class PersonServices {
 	public PersonVO create(PersonVO personVO) {
 		logger.info("Creating one person");
 
-		var entity = DozerMapper.parseObject(personVO, Person.class);  
+		var entity = DozerMapper.parseObject(personVO, Person.class);
 
-		//Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A APLICAÇÃO APENAS
+		// Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A
+		// APLICAÇÃO APENAS
 		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
 		return vo;
-	}  
+	}
 
-	  public PersonVO update(PersonVO person) {
+	public PersonVOV2 createV2(PersonVOV2 person) {
+		logger.info("Creating one person with V2!");
+
+		var entity = DozerMapper.parseObject(person, Person.class);
+
+		// Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A
+		// APLICAÇÃO APENAS
+		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVOv2.class);
+		return vo;// TODO Auto-generated method stub
+	}
+
+	public PersonVO update(PersonVO person) {
 		logger.info("Updating one person");
 
 		var entity = personRepository.findById(person.getId())
@@ -62,12 +75,13 @@ public class PersonServices {
 		entity.setAddress(person.getAddress());
 		entity.setGender(person.getGender());
 
-		//Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A APLICAÇÃO APENAS
+		// Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A
+		// APLICAÇÃO APENAS
 		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
 		return vo;
 	}
 
-	public void delete(Long id)  {
+	public void delete(Long id) {
 		logger.info("Deleting one person");
 
 		var entity = personRepository.findById(id)
