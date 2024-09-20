@@ -41,7 +41,7 @@ public class PersonController {
 		return service.create(person);
 	}
 
-	@PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Person update(@RequestBody Person person) throws Exception {
 		return service.update(person);
 	}
