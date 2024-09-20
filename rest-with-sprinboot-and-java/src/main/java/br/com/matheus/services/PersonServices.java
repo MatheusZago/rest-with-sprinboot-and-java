@@ -12,6 +12,7 @@ import br.com.matheus.data.vo.v1.PersonVO;
 import br.com.matheus.data.vo.v2.PersonVOV2;
 import br.com.matheus.exceptions.ResourceNotFoundException;
 import br.com.matheus.mapper.DozerMapper;
+import br.com.matheus.mapper.custom.PersonMapper;
 import br.com.matheus.model.Person;
 import br.com.matheus.repositories.PersonRepository;
 
@@ -24,6 +25,8 @@ public class PersonServices {
 
 	@Autowired // Tbm serve pra injetar p cpntroller
 	private PersonRepository personRepository;
+	@Autowired // Tbm serve pra injetar p cpntroller
+	private PersonMapper personMapper;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<PersonVO> findAll() throws Exception {
@@ -56,12 +59,11 @@ public class PersonServices {
 	public PersonVOV2 createV2(PersonVOV2 person) {
 		logger.info("Creating one person with V2!");
 
-		var entity = DozerMapper.parseObject(person, Person.class);
-
-		// Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A
-		// APLICAÇÃO APENAS
-		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVOv2.class);
-		return vo;// TODO Auto-generated method stub
+		//Transforma em pessoa para salvar no BD
+		var entity = personMapper.convertVoToEntity(person);
+		//Salva e dps converte para VO de novo
+		var vo = personMapper.convertEntityToVo(personRepository.save(entity));
+		return vo;
 	}
 
 	public PersonVO update(PersonVO person) {
