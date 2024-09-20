@@ -1,4 +1,4 @@
-package br.com.matheus;
+package br.com.matheus.controllers;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.matheus.model.Person;
+import br.com.matheus.data.vo.v1.PersonVO;
 import br.com.matheus.services.PersonServices;
 
 @RestController // RestController add um response body e um controller.
@@ -27,23 +27,23 @@ public class PersonController {
 	// pelo autowired e pelo service.
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Person findById(@PathVariable Long id) throws Exception {
+	public PersonVO findById(@PathVariable Long id) throws Exception {
 
 		return service.findById(id);
 	}
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Person> findByAll() throws Exception {
+	public List<PersonVO> findByAll() throws Exception {
 		return service.findAll();
 	}
 
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Person create(@RequestBody Person person) throws Exception {
+	public PersonVO create(@RequestBody PersonVO person) throws Exception {
 		return service.create(person);
 	}
 
 	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Person update(@RequestBody Person person) throws Exception {
+	public PersonVO update(@RequestBody PersonVO person) throws Exception {
 		return service.update(person);
 	}
 

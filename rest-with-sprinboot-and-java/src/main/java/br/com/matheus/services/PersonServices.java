@@ -8,13 +8,15 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import br.com.matheus.data.vo.v1.PersonVO;
 import br.com.matheus.exceptions.ResourceNotFoundException;
+import br.com.matheus.mapper.DozerMapper;
 import br.com.matheus.model.Person;
 import br.com.matheus.repositories.PersonRepository;
 
 @Service // Para que o Springboot encare esse objeto como um que vai ser injetado em
 			// runtime na app
-//Ou seja, ele não precisa fazer o Person Service = new Service(), isso já faz ele ficar instanciado em todos os lugares que precisam dele
+//Ou seja, ele não precisa fazer o PersonVO Service = new Service(), isso já faz ele ficar instanciado em todos os lugares que precisam dele
 public class PersonServices {
 
 	private Logger logger = Logger.getLogger(PersonServices.class.getName());
@@ -23,30 +25,36 @@ public class PersonServices {
 	private PersonRepository personRepository;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Person> findAll() throws Exception {
+	public List<PersonVO> findAll() throws Exception {
 		logger.info("Finding all people");
-		return personRepository.findAll();
+		// Ta pegando a lista que teve e transformando todos os elementos em PersonVo
+		return DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
 	}
 
-	public Person findById(Long id) {
+	public PersonVO findById(Long id) {
 		logger.info("Finding one person!");
 
-		return personRepository.findById(id)
+		var entity = personRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
+
+		return DozerMapper.parseObject(entity, PersonVO.class);
+
 	}
 
-//	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public Person create(Person person) throws Exception {
-
+	public PersonVO create(PersonVO personVO) {
 		logger.info("Creating one person");
-		return personRepository.save(person);
-	}
 
-//	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public Person update(Person person) throws Exception {
+		var entity = DozerMapper.parseObject(personVO, Person.class);  
+
+		//Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A APLICAÇÃO APENAS
+		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+		return vo;
+	}  
+
+	  public PersonVO update(PersonVO person) {
 		logger.info("Updating one person");
 
-		Person entity = personRepository.findById(person.getId())
+		var entity = personRepository.findById(person.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
 
 		entity.setFirstName(person.getFirstName());
@@ -54,14 +62,15 @@ public class PersonServices {
 		entity.setAddress(person.getAddress());
 		entity.setGender(person.getGender());
 
-		return personRepository.save(entity);
+		//Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A APLICAÇÃO APENAS
+		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+		return vo;
 	}
 
-//	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public void delete(Long id) throws Exception {
+	public void delete(Long id)  {
 		logger.info("Deleting one person");
 
-		Person entity = personRepository.findById(id)
+		var entity = personRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
 
 		personRepository.delete(entity);
