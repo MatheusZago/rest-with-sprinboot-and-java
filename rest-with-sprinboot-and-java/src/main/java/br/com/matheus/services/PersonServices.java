@@ -42,6 +42,26 @@ public class PersonServices {
 		return persons;
 	}
 
+//	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public Person create(Person person) throws Exception {
+
+		logger.info("Creating one person");
+		return person;
+	}
+
+//	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public Person update(Person person) throws Exception {
+
+		logger.info("Updating one person");
+		return person;
+	}
+
+//	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public void delete(String id) throws Exception {
+
+		logger.info("Deleting one person");
+	}
+
 	private Person mockPerson(int i) {
 
 		logger.info("Findind all people");
