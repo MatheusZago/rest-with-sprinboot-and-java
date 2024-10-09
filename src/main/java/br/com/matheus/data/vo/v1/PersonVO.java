@@ -1,36 +1,39 @@
 package br.com.matheus.data.vo.v1;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.github.dozermapper.core.Mapping;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 //Isso aqui é pra escolher a ordem de como vão ser mostradas
 @JsonPropertyOrder({"id", "first_name", "last_name", "address",  "gender"})
-public class PersonVO implements Serializable {
+public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
+	@JsonProperty("id")
+	@Mapping("id") //Ainda precisa ser chamado de id nas funções
+	private Long key; //Mudou o nome de id para não conflitar com hateoas
 	@JsonProperty("first_name") //Mudando o nome enquanto em json
 	private String firstName;
 	@JsonProperty("last_name")
 	private String lastName;
 	private String address;
-	@JsonIgnore
+	//@JsonIgnore
 	private String gender;
 
 	public PersonVO() {
 
 	}
 
-	public Long getId() {
-		return id;
+	public Long getKey() {
+		return key;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setKey(Long key) {
+		this.key = key;
 	}
 
 	public String getFirstName() {
@@ -67,7 +70,7 @@ public class PersonVO implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(key);
 	}
 
 	@Override
@@ -79,7 +82,7 @@ public class PersonVO implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		PersonVO other = (PersonVO) obj;
-		return id == other.id;
+		return key == other.key;
 	}
 
 }
