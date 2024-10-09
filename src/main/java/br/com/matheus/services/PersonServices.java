@@ -3,8 +3,11 @@ package br.com.matheus.services;
 import java.util.List;
 import java.util.logging.Logger;
 
+import br.com.matheus.controllers.PersonController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -37,7 +40,10 @@ public class PersonServices {
 		var entity = personRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
 
-		return DozerMapper.parseObject(entity, PersonVO.class);
+		PersonVO vo = DozerMapper.parseObject(entity, PersonVO.class);
+		//Usando hateo para criar um link de auto relacionamento
+		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel()); //Adicionando um endereço para si mesmo
+		return vo;
 
 	}
 
@@ -54,7 +60,7 @@ public class PersonServices {
 	  public PersonVO update(PersonVO person) {
 		logger.info("Updating one person");
 
-		var entity = personRepository.findById(person.getId())
+		var entity = personRepository.findById(person.getKey())
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
 
 		entity.setFirstName(person.getFirstName());
