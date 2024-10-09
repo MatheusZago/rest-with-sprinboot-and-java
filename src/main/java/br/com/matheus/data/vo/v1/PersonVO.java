@@ -1,15 +1,24 @@
 package br.com.matheus.data.vo.v1;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+//Isso aqui é pra escolher a ordem de como vão ser mostradas
+@JsonPropertyOrder({"id", "first_name", "last_name", "address",  "gender"})
 public class PersonVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	@JsonProperty("first_name") //Mudando o nome enquanto em json
 	private String firstName;
+	@JsonProperty("last_name")
 	private String lastName;
 	private String address;
+	@JsonIgnore
 	private String gender;
 
 	public PersonVO() {
