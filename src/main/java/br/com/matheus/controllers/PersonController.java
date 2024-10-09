@@ -2,8 +2,8 @@ package br.com.matheus.controllers;
 
 import java.util.List;
 
+import br.com.matheus.util.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,25 +27,37 @@ public class PersonController {
 	// pelo autowired e pelo service.
 
 	//Marcando que ele pode produzir tanto Json qnt XML
-	@GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML})
 	public PersonVO findById(@PathVariable Long id) throws Exception {
 
 		return service.findById(id);
 	}
 
-	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@GetMapping(produces = {MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML})
 	public List<PersonVO> findByAll() throws Exception {
 		return service.findAll();
 	}
 
-	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-			consumes =  {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@PostMapping(produces = {MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML},
+			consumes =  {MediaType.APPLICATION_JSON,
+					MediaType.APPLICATION_XML,
+					MediaType.APPLICATION_YML})
 	public PersonVO create(@RequestBody PersonVO person) throws Exception {
 		return service.create(person);
 	}
 
-	@PutMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-			consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@PutMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON,
+			MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML},
+			consumes = {MediaType.APPLICATION_JSON,
+					MediaType.APPLICATION_XML,
+					MediaType.APPLICATION_YML})
 	public PersonVO update(@RequestBody PersonVO person) throws Exception {
 		return service.update(person);
 	}
