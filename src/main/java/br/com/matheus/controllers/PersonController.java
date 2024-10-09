@@ -18,7 +18,7 @@ import br.com.matheus.data.vo.v1.PersonVO;
 import br.com.matheus.services.PersonServices;
 
 @RestController // RestController add um response body e um controller.
-@RequestMapping("/person")
+@RequestMapping("/api/person/v1")
 public class PersonController {
 
 	@Autowired
