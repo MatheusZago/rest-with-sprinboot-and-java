@@ -29,7 +29,7 @@ public class PersonServices {
 	private PersonRepository personRepository;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<PersonVO> findAll() throws Exception {
+	public List<PersonVO> findAll() {
 		logger.info("Finding all people");
 		var persons = DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
 		//Criando stream para passar os links
