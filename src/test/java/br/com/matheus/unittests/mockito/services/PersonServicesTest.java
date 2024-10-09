@@ -1,5 +1,6 @@
 package br.com.matheus.unittests.mockito.services;
 
+import br.com.matheus.data.vo.v1.PersonVO;
 import br.com.matheus.model.Person;
 import br.com.matheus.repositories.PersonRepository;
 import br.com.matheus.services.PersonServices;
@@ -48,36 +49,83 @@ public class PersonServicesTest {
 
     @Test
     void testFindById(){
-        Person person = input.mockEntity(1); //Retorna um new perosn, só que sem Id
-        person.setId(1L);
+        Person entity = input.mockEntity(1); //Retorna um new perosn, só que sem Id
+        entity.setId(1L);
 
-        when(repository.findById(1L)).thenReturn(Optional.of(person));
+        when(repository.findById(1L)).thenReturn(Optional.of(entity));
 
         var result = service.findById(1L);
         assertThat(result).isNotNull();
         assertThat(result.getKey()).isNotNull();
         assertThat(result.getLinks()).isNotNull();
+
         assertTrue(result.toString().contains("links: [</api/person/v1/1>;rel=\"self\"]"));
+
         assertEquals("Addres Test1", result.getAddress());
         assertEquals("First Name Test1", result.getFirstName());
         assertEquals("Last Name Test1", result.getLastName());
         assertEquals("Female", result.getGender());
-
-
     }
 
     @Test
     void testCreate(){
-        fail("Not yet implemented");
+        Person entity = input.mockEntity(1); //Retorna um new perosn, só que sem Id
+        Person persisted = entity;
+        persisted.setId(1L);
+
+        PersonVO vo = input.mockVO(1);
+        vo.setKey(1L);
+
+        when(repository.save(entity)).thenReturn(persisted);
+
+        var result = service.create(vo);
+        assertThat(result).isNotNull();
+        assertThat(result.getKey()).isNotNull();
+        assertThat(result.getLinks()).isNotNull();
+
+        assertTrue(result.toString().contains("links: [</api/person/v1/1>;rel=\"self\"]"));
+
+        assertEquals("Addres Test1", result.getAddress());
+        assertEquals("First Name Test1", result.getFirstName());
+        assertEquals("Last Name Test1", result.getLastName());
+        assertEquals("Female", result.getGender());
     }
 
     @Test
     void testUpdate(){
-        fail("Not yet implemented");
+        Person entity = input.mockEntity(1); //Retorna um new perosn, só que sem Id
+        entity.setId(1L);
+
+        Person persisted = entity;
+        persisted.setId(1L);
+
+        PersonVO vo = input.mockVO(1);
+        vo.setKey(1L);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(entity));
+        when(repository.save(entity)).thenReturn(persisted);
+
+        var result = service.update(vo);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getKey()).isNotNull();
+        assertThat(result.getLinks()).isNotNull();
+
+        assertTrue(result.toString().contains("links: [</api/person/v1/1>;rel=\"self\"]"));
+
+        assertEquals("Addres Test1", result.getAddress());
+        assertEquals("First Name Test1", result.getFirstName());
+        assertEquals("Last Name Test1", result.getLastName());
+        assertEquals("Female", result.getGender());
     }
 
     @Test
     void testDelete(){
-        fail("Not yet implemented");
+        Person entity = input.mockEntity(1); //Retorna um new perosn, só que sem Id
+        entity.setId(1L);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(entity));
+
+        service.delete(1L);
     }
 }
