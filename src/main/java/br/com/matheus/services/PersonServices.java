@@ -31,7 +31,10 @@ public class PersonServices {
 	public List<PersonVO> findAll() throws Exception {
 		logger.info("Finding all people");
 		// Ta pegando a lista que teve e transformando todos os elementos em PersonVo
-		return DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
+		var persons = DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
+		//Criando stream para passar os links
+		persons.stream().forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+		return persons;
 	}
 
 	public PersonVO findById(Long id) {
@@ -40,7 +43,7 @@ public class PersonServices {
 		var entity = personRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
 
-		PersonVO vo = DozerMapper.parseObject(entity, PersonVO.class);
+		var vo = DozerMapper.parseObject(entity, PersonVO.class);
 		//Usando hateo para criar um link de auto relacionamento
 		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel()); //Adicionando um endereço para si mesmo
 		return vo;
@@ -54,6 +57,7 @@ public class PersonServices {
 
 		//Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A APLICAÇÃO APENAS
 		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel()); //Adicionando um endereço para si mesmo
 		return vo;
 	}  
 
@@ -70,6 +74,7 @@ public class PersonServices {
 
 		//Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A APLICAÇÃO APENAS
 		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+		vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel()); //Adicionando um endereço para si mesmo
 		return vo;
 	}
 

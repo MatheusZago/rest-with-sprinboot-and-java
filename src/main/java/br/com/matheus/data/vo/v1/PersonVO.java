@@ -13,6 +13,7 @@ import java.util.Objects;
 public class PersonVO extends RepresentationModel<PersonVO> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@JsonProperty("id")
 	@Mapping("id") //Ainda precisa ser chamado de id nas funções
 	private Long key; //Mudou o nome de id para não conflitar com hateoas
 	@JsonProperty("first_name") //Mudando o nome enquanto em json
