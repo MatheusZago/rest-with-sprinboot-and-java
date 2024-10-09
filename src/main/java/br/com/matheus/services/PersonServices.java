@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import br.com.matheus.controllers.PersonController;
+import br.com.matheus.exceptions.RequiredObjectIsNullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -30,7 +31,6 @@ public class PersonServices {
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<PersonVO> findAll() throws Exception {
 		logger.info("Finding all people");
-		// Ta pegando a lista que teve e transformando todos os elementos em PersonVo
 		var persons = DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
 		//Criando stream para passar os links
 		persons.stream().forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
@@ -51,8 +51,9 @@ public class PersonServices {
 	}
 
 	public PersonVO create(PersonVO personVO) {
-		logger.info("Creating one person");
+		if(personVO == null) throw new RequiredObjectIsNullException();
 
+		logger.info("Creating one person");
 		var entity = DozerMapper.parseObject(personVO, Person.class);  
 
 		//Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A APLICAÇÃO APENAS
@@ -61,16 +62,18 @@ public class PersonServices {
 		return vo;
 	}  
 
-	  public PersonVO update(PersonVO person) {
-		logger.info("Updating one person");
+	  public PersonVO update(PersonVO personVO) {
+		  if(personVO == null) throw new RequiredObjectIsNullException();
 
-		var entity = personRepository.findById(person.getKey())
+		  logger.info("Updating one person");
+
+		var entity = personRepository.findById(personVO.getKey())
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
 
-		entity.setFirstName(person.getFirstName());
-		entity.setLastName(person.getLastName());
-		entity.setAddress(person.getAddress());
-		entity.setGender(person.getGender());
+		entity.setFirstName(personVO.getFirstName());
+		entity.setLastName(personVO.getLastName());
+		entity.setAddress(personVO.getAddress());
+		entity.setGender(personVO.getGender());
 
 		//Primeiro ele vai salvar, e ai o objeto salvo vai ser covertido para VO PARA A APLICAÇÃO APENAS
 		var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);

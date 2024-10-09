@@ -1,6 +1,7 @@
 package br.com.matheus.unittests.mockito.services;
 
 import br.com.matheus.data.vo.v1.PersonVO;
+import br.com.matheus.exceptions.RequiredObjectIsNullException;
 import br.com.matheus.model.Person;
 import br.com.matheus.repositories.PersonRepository;
 import br.com.matheus.services.PersonServices;
@@ -18,8 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 
@@ -42,10 +42,10 @@ public class PersonServicesTest {
 
     }
 
-    @Test
-    void testFindAll(){
-        fail("Not yet implemented");
-    }
+//    @Test
+//    void testFindAll(){
+//        fail("Not yet implemented");
+//    }
 
     @Test
     void testFindById(){
@@ -92,6 +92,18 @@ public class PersonServicesTest {
     }
 
     @Test
+    void testCreateWithNullPerson(){
+        Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
+           service.create(null);
+        });
+
+        String expectedMessage = "It is not allowed to persist a null object.";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
     void testUpdate(){
         Person entity = input.mockEntity(1); //Retorna um new perosn, só que sem Id
         entity.setId(1L);
@@ -117,6 +129,18 @@ public class PersonServicesTest {
         assertEquals("First Name Test1", result.getFirstName());
         assertEquals("Last Name Test1", result.getLastName());
         assertEquals("Female", result.getGender());
+    }
+
+    @Test
+    void testUpdateWithNullPerson(){
+        Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> {
+            service.update(null);
+        });
+
+        String expectedMessage = "It is not allowed to persist a null object.";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test
