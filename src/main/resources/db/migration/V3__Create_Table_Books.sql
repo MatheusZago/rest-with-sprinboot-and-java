@@ -1,4 +1,4 @@
-﻿USE `rest_with_springboot_matheus`;
+﻿-- USE `rest_with_springboot_matheus`;
 
 
 CREATE TABLE `books` (
