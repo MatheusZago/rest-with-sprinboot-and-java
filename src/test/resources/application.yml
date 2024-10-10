@@ -1,0 +1,19 @@
+server:
+  port: 8888
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+   # properties: #Comentando pq ta depreciado, só que deixar aqui para estudos
+   #   hibernate:
+   #     dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+    open-in-view: false
+
+springdoc:
+  pathsToMatch: /api/**/v1/**
+  swagger-ui:
+    use-root-path: true
