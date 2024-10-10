@@ -1,4 +1,4 @@
-package br.com.matheus.securityJwt;
+package br.com.matheus.security.jwt;
 
 import br.com.matheus.data.vo.v1.security.TokenVO;
 import br.com.matheus.exceptions.InvalidJwtAuthenticationException;
@@ -27,7 +27,7 @@ public class JwtTokenProvider {
     @Value("${security.jwt.token.secret-key:secret}")
     private String secretKey = "secret";
 
-    @Value("${security.jwt.token.expire-lenght:3600000}")
+    @Value("${security.jwt.token.expire-length:3600000}")
     private long validInMiliSeconds = 3600000; //1hora
 
     @Autowired
