@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-@XmlRootElement //Para poder serializar como Xml qnd precisar
+@XmlRootElement(name = "TokenVO") //Para poder serializar como Xml qnd precisar
 public class TokenVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
