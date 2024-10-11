@@ -24,6 +24,7 @@ public class AuthServices {
     @Autowired
     private UserRepository userRepository;
 
+    @SuppressWarnings("rawtypes")
     public ResponseEntity sigin(AccountCredentialsVO data){
         try{
             var username = data.getUsername();
@@ -43,5 +44,19 @@ public class AuthServices {
         }catch (Exception e){
             throw new BadCredentialsException("Invalid username/password supplied");
         }
+    }
+    @SuppressWarnings("rawtypes")
+    public ResponseEntity refreshToken(String username, String refreshToken){
+        var user = userRepository.findByUsername(username);
+
+        var tokenResponse = new TokenVO();
+        if(user != null){
+            tokenResponse = jwtTokenProvider.refreshToken(refreshToken);
+        }else {
+            throw new UsernameNotFoundException("Username " + username + " not found...");
+        }
+
+        return ResponseEntity.ok(tokenResponse);
+
     }
 }
