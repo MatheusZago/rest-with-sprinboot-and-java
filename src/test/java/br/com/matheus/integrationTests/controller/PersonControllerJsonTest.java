@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class )
 public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
-
 	private static RequestSpecification specification;
 	private static ObjectMapper objectMapper;
 	private static PersonVO person;
@@ -36,20 +35,42 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-	@Order(1)
-	public void testCreate() throws JsonProcessingException, JsonMappingException  {
-		mockPerson();
+	@Order(0)
+	public void authorization() throws JsonProcessingException, JsonMappingException  {
+		AccountCredentialsVO user = new AccountCredentialsVO("leandro", "admin123");
+
+		var accessToken = given()
+				.basePath("/auth/signin")
+					.port(TesteConfigs.SERVER_PORT)
+					.contentType(TesteConfigs.CONTENT_TYPE_JSON)
+				.body(user)
+					.when()
+				.post()
+					.then()
+						.statusCode(200)
+							.extract()
+								.body()
+									.as(TokenVO.class)
+				.getAccessToken();
 
 		specification = new RequestSpecBuilder()
-				.addHeader(TesteConfigs.HEADER_PARAM_ORIGIN, TesteConfigs.ORIGIN_MATHEUS)
+				.addHeader(TesteConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
 				.setBasePath("/api/person/v1")
 				.setPort(TesteConfigs.SERVER_PORT)
 				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 				.build();
 
+	}
+
+	@Test
+	@Order(1)
+	public void testCreate() throws JsonProcessingException, JsonMappingException  {
+		mockPerson();
+
 		var content = given().spec(specification)
 				.contentType(TesteConfigs.CONTENT_TYPE_JSON)
+				.header(TesteConfigs.HEADER_PARAM_ORIGIN, TesteConfigs.ORIGIN_MATHEUS)
 					.body(person)
 					.when()
 					.post()
@@ -82,16 +103,9 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 	public void testCreateWithWrongOrigin() throws JsonProcessingException, JsonMappingException  {
 		mockPerson();
 
-		specification = new RequestSpecBuilder()
-				.addHeader(TesteConfigs.HEADER_PARAM_ORIGIN, TesteConfigs.ORIGIN_INVALIDO)
-				.setBasePath("/api/person/v1")
-				.setPort(TesteConfigs.SERVER_PORT)
-				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-
 		var content = given().spec(specification)
 				.contentType(TesteConfigs.CONTENT_TYPE_JSON)
+				.header(TesteConfigs.HEADER_PARAM_ORIGIN, TesteConfigs.ORIGIN_INVALIDO)
 				.body(person)
 				.when()
 				.post()
@@ -111,17 +125,9 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 	public void testFindById() throws JsonProcessingException, JsonMappingException  {
 		mockPerson();
 
-		specification = new RequestSpecBuilder()
-				.addHeader(TesteConfigs.HEADER_PARAM_ORIGIN, TesteConfigs.ORIGIN_MATHEUS)
-				.setBasePath("/api/person/v1")
-				.setPort(TesteConfigs.SERVER_PORT)
-				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-
 		var content = given().spec(specification)
 				.contentType(TesteConfigs.CONTENT_TYPE_JSON)
-				.pathParams("id", person.getId())
+				.header(TesteConfigs.HEADER_PARAM_ORIGIN, TesteConfigs.ORIGIN_MATHEUS)				.pathParams("id", person.getId())
 				.when()
 				.get("{id}")
 				.then()
@@ -153,16 +159,9 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 	public void testFindByIdWithWrongOrigin() throws JsonProcessingException, JsonMappingException  {
 		mockPerson();
 
-		specification = new RequestSpecBuilder()
-				.addHeader(TesteConfigs.HEADER_PARAM_ORIGIN, TesteConfigs.ORIGIN_INVALIDO)
-				.setBasePath("/api/person/v1")
-				.setPort(TesteConfigs.SERVER_PORT)
-				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-
 		var content = given().spec(specification)
 				.contentType(TesteConfigs.CONTENT_TYPE_JSON)
+				.header(TesteConfigs.HEADER_PARAM_ORIGIN, TesteConfigs.ORIGIN_INVALIDO)
 				.pathParams("id", person.getId())
 				.when()
 				.get("{id}")
