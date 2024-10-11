@@ -1,4 +1,4 @@
-package br.com.matheus.integrationTests.controller;
+package br.com.matheus.integrationTests.vo;
 
 import java.io.Serializable;
 import java.util.Date;

@@ -1,7 +1,9 @@
-package br.com.matheus.integrationTests.controller;
+package br.com.matheus.integrationTests.controller.withjson;
 
 import br.com.matheus.integrationTests.testsContainer.AbstractIntegrationTest;
+import br.com.matheus.integrationTests.vo.AccountCredentialsVO;
 import br.com.matheus.integrationTests.vo.PersonVO;
+import br.com.matheus.integrationTests.vo.TokenVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -34,34 +36,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		person = new PersonVO();
 	}
 
-	@Test
-	@Order(0)
-	public void authorization() throws JsonProcessingException, JsonMappingException  {
-		AccountCredentialsVO user = new AccountCredentialsVO("leandro", "admin123");
 
-		var accessToken = given()
-				.basePath("/auth/signin")
-					.port(TesteConfigs.SERVER_PORT)
-					.contentType(TesteConfigs.CONTENT_TYPE_JSON)
-				.body(user)
-					.when()
-				.post()
-					.then()
-						.statusCode(200)
-							.extract()
-								.body()
-									.as(TokenVO.class)
-				.getAccessToken();
-
-		specification = new RequestSpecBuilder()
-				.addHeader(TesteConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-				.setBasePath("/api/person/v1")
-				.setPort(TesteConfigs.SERVER_PORT)
-				.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-				.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
-				.build();
-
-	}
 
 	@Test
 	@Order(1)
