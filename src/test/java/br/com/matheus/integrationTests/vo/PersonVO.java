@@ -1,12 +1,12 @@
 package br.com.matheus.integrationTests.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.springframework.hateoas.RepresentationModel;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Objects;
 
+@XmlRootElement //Para poder serializar como Xml qnd precisar
 public class PersonVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
