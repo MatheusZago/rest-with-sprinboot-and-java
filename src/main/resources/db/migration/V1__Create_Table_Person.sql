@@ -1,5 +1,3 @@
--- USE `rest_with_springboot_matheus`;
-
 CREATE TABLE IF NOT EXISTS `person` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `first_name` varchar(80) NOT NULL,
