@@ -33,7 +33,7 @@ import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class PersonControllerXmlTest extends AbstractIntegrationTest { /*
+public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	private static RequestSpecification specification;
 	private static XmlMapper objectMapper;
@@ -240,11 +240,11 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest { /*
 		assertNotNull(foundPersonSix.getAddress());
 		assertNotNull(foundPersonSix.getGender());
 
-		assertEquals(9, foundPersonSix.getId());
+		assertEquals(8, foundPersonSix.getId());
 
 		assertEquals("Nelson", foundPersonSix.getFirstName());
-		assertEquals("Mvezo", foundPersonSix.getLastName());
-		assertEquals("Mvezo – South Africa", foundPersonSix.getAddress());
+		assertEquals("Mandela", foundPersonSix.getLastName());
+		assertEquals("Vezo  - Africa do Sul", foundPersonSix.getAddress());
 		assertEquals("Male", foundPersonSix.getGender());
 	}
 
@@ -274,5 +274,5 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest { /*
 		person.setLastName("Piquet");
 		person.setAddress("Brasília - DF - Brasil");
 		person.setGender("Male");
-	} */
+	}
 }
