@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import br.com.matheus.controllers.PersonController;
 import br.com.matheus.exceptions.RequiredObjectIsNullException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -30,12 +32,17 @@ public class PersonServices {
 	private PersonRepository personRepository;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<PersonVO> findAll() {
+	public Page<PersonVO> findAll(Pageable pageable) {
 		logger.info("Finding all people");
-		var persons = DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
-		//Criando stream para passar os links
-		persons.stream().forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
-		return persons;
+
+		var personPage = personRepository.findAll(pageable);
+		var personVOPage = personPage.map(p ->  DozerMapper.parseObject(p, PersonVO.class));
+
+		//Passando linkhateos
+		personVOPage.map(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+
+
+		return personVOPage;
 	}
 
 	public PersonVO findById(Long id) {
