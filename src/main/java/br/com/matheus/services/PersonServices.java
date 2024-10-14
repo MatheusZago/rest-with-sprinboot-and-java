@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import br.com.matheus.data.vo.v1.PersonVO;
@@ -47,7 +48,6 @@ public class PersonServices {
 		//Usando hateo para criar um link de auto relacionamento
 		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel()); //Adicionando um endereço para si mesmo
 		return vo;
-
 	}
 
 	public PersonVO create(PersonVO personVO) {
@@ -80,6 +80,22 @@ public class PersonServices {
 		vo.add(linkTo(methodOn(PersonController.class).findById(vo.getKey())).withSelfRel()); //Adicionando um endereço para si mesmo
 		return vo;
 	}
+
+	@Transactional
+	public PersonVO disablePerson(Long id) {
+		logger.info("Disabling one person!");
+
+		personRepository.disablePerson(id);
+
+		var entity = personRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
+
+		var vo = DozerMapper.parseObject(entity, PersonVO.class);
+		//Usando hateo para criar um link de auto relacionamento
+		vo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel()); //Adicionando um endereço para si mesmo
+		return vo;
+	}
+
 
 	public void delete(Long id)  {
 		logger.info("Deleting one person");
