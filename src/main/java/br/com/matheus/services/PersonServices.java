@@ -1,12 +1,10 @@
 package br.com.matheus.services;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import br.com.matheus.controllers.PersonController;
 import br.com.matheus.exceptions.RequiredObjectIsNullException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -43,6 +41,23 @@ public class PersonServices {
 		logger.info("Finding all people");
 
 		var personPage = personRepository.findAll(pageable);
+		var personVOPage = personPage.map(p ->  DozerMapper.parseObject(p, PersonVO.class));
+
+		//Passando linkhateos
+		personVOPage.map(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+
+		//Para adicionar o link hateas da PÁGINA em si
+		Link link = linkTo(methodOn(PersonController.class).
+				findByAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+
+		return assembler.toModel(personVOPage, link);
+	}
+
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public PagedModel<EntityModel<PersonVO>> findPeopleByName(String firstName, Pageable pageable) throws Exception {
+		logger.info("Finding all people");
+
+		var personPage = personRepository.findPeopleByName(firstName ,pageable);
 		var personVOPage = personPage.map(p ->  DozerMapper.parseObject(p, PersonVO.class));
 
 		//Passando linkhateos
