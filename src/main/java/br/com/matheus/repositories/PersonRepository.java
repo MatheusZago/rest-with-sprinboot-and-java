@@ -12,7 +12,7 @@ import br.com.matheus.model.Person;
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
     @Modifying
-    @Query("UPDATE Person p p.enabled = false WHERE p.id = :id")
-    Void disablePerson(@Param("id") Long id);
+    @Query("UPDATE Person p SET p.enabled = false WHERE p.id = :id")
+    int disablePerson(@Param("id") Long id);
 
 }
