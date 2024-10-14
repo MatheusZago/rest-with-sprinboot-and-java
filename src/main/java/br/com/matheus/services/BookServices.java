@@ -1,13 +1,20 @@
 package br.com.matheus.services;
 
 import br.com.matheus.controllers.BookController;
+import br.com.matheus.controllers.PersonController;
 import br.com.matheus.data.vo.v1.BookVO;
+import br.com.matheus.data.vo.v1.PersonVO;
 import br.com.matheus.exceptions.RequiredObjectIsNullException;
 import br.com.matheus.exceptions.ResourceNotFoundException;
 import br.com.matheus.mapper.DozerMapper;
 import br.com.matheus.model.Book;
 import br.com.matheus.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,13 +33,24 @@ public class BookServices {
 	@Autowired 
 	private BookRepository bookRepository;
 
+	@Autowired
+	private PagedResourcesAssembler<BookVO> assembler;
+
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<BookVO> findAll() {
+	public PagedModel<EntityModel<BookVO>> findAll(Pageable pageable) throws Exception {
 		logger.info("Finding all books");
-		var books = DozerMapper.parseListObjects(bookRepository.findAll(), BookVO.class);
-		//Criando stream para passar os links
-		books.stream().forEach(p -> p.add(linkTo(methodOn(BookController.class).findById(p.getKey())).withSelfRel()));
-		return books;
+
+		var bookPage = bookRepository.findAll(pageable);
+		var bookVOPage = bookPage.map(b ->  DozerMapper.parseObject(b, BookVO.class));
+
+		//Passando linkhateos
+		bookVOPage.map(b -> b.add(linkTo(methodOn(BookController.class).findById(b.getKey())).withSelfRel()));
+
+		//Para adicionar o link hateas da PÁGINA em si
+		Link link = linkTo(methodOn(BookController.class).
+				findByAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+
+		return assembler.toModel(bookVOPage, link);
 	}
 
 	public BookVO findById(Long id) {

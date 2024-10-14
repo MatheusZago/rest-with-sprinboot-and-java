@@ -66,7 +66,7 @@ public class PersonController {
 					@ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content),
 			})
 	public ResponseEntity<PagedModel<EntityModel<PersonVO>>> findByAll(@RequestParam(value = "page", defaultValue = "0") Integer page,
-																	  @RequestParam(value = "limit", defaultValue = "12") Integer size,
+																	  @RequestParam(value = "size", defaultValue = "12") Integer size,
 																	  @RequestParam(value = "direction", defaultValue = "asc") String direction) throws Exception {
 
 		var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
