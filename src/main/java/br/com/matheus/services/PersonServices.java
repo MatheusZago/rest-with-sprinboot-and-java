@@ -1,11 +1,15 @@
 package br.com.matheus.services;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import br.com.matheus.controllers.PersonController;
 import br.com.matheus.exceptions.RequiredObjectIsNullException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -26,16 +30,44 @@ public class PersonServices {
 
 	private Logger logger = Logger.getLogger(PersonServices.class.getName());
 
-	@Autowired // Tbm serve pra injetar p cpntroller
+	@Autowired
 	private PersonRepository personRepository;
 
+	@Autowired
+	private PagedResourcesAssembler<PersonVO> assembler;
+
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<PersonVO> findAll() {
+	public PagedModel<EntityModel<PersonVO>> findAll(Pageable pageable) throws Exception {
 		logger.info("Finding all people");
-		var persons = DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
-		//Criando stream para passar os links
-		persons.stream().forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
-		return persons;
+
+		var personPage = personRepository.findAll(pageable);
+		var personVOPage = personPage.map(p ->  DozerMapper.parseObject(p, PersonVO.class));
+
+		//Passando linkhateos
+		personVOPage.map(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+
+		//Para adicionar o link hateas da PÁGINA em si
+		Link link = linkTo(methodOn(PersonController.class).
+				findByAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+
+		return assembler.toModel(personVOPage, link);
+	}
+
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public PagedModel<EntityModel<PersonVO>> findPeopleByName(String firstName, Pageable pageable) throws Exception {
+		logger.info("Finding all people");
+
+		var personPage = personRepository.findPeopleByName(firstName ,pageable);
+		var personVOPage = personPage.map(p ->  DozerMapper.parseObject(p, PersonVO.class));
+
+		//Passando linkhateos
+		personVOPage.map(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+
+		//Para adicionar o link hateas da PÁGINA em si
+		Link link = linkTo(methodOn(PersonController.class).
+				findByAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+
+		return assembler.toModel(personVOPage, link);
 	}
 
 	public PersonVO findById(Long id) {
