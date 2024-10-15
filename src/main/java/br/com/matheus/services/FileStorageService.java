@@ -2,7 +2,10 @@ package br.com.matheus.services;
 
 import br.com.matheus.config.FileStorageConfig;
 import br.com.matheus.exceptions.FileStorageException;
+import br.com.matheus.exceptions.MyFileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +47,19 @@ public class FileStorageService {
             return fileName;
         }catch (Exception e){
             throw new FileStorageException("Could not store file " + file + ". Please try again", e);
+        }
+    }
+
+    public Resource loadFileAsResource(String fileName){
+        try {
+            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if(resource.exists()) return resource;
+            else throw new MyFileNotFoundException("File not found: " + fileName);
+
+        }catch (Exception e){
+            throw new MyFileNotFoundException("File not found: " + fileName, e);
         }
     }
 }
