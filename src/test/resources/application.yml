@@ -3,7 +3,8 @@ server:
 cors:
   originPatterns: http://localhost:8080,https://matheus.com.br,http://localhost:3000
 file:
-  upload-dir: /code/upload-dir
+ # upload-dir: /code/upload-dir #Esse é para a versão local
+  upload-dir: /home/runner/work/rest-with-sprinboot-and-java/upload-dir
 
 security:
   jwt:
